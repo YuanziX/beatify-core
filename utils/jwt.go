@@ -8,15 +8,15 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/yuanzix/userAuth/internal/database"
-	"github.com/yuanzix/userAuth/models"
+	"github.com/yuanzix/beatify-core/internal/database"
+	"github.com/yuanzix/beatify-core/models"
 )
 
 func CreateToken(auth database.Auth) (string, error) {
 	claims := jwt.MapClaims{
 		"email":     auth.UserEmail,
 		"auth_uuid": auth.AuthUuid,
-		"iss":       "userAuth",
+		"iss":       "beatify-core",
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

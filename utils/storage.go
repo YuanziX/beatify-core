@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq"
-	"github.com/yuanzix/userAuth/internal/database"
-	"github.com/yuanzix/userAuth/models"
+	"github.com/yuanzix/beatify-core/internal/database"
+	"github.com/yuanzix/beatify-core/models"
 )
 
 type Storage interface {

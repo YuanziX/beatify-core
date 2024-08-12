@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/yuanzix/userAuth/handlers"
-	"github.com/yuanzix/userAuth/utils"
+	"github.com/yuanzix/beatify-core/handlers"
+	"github.com/yuanzix/beatify-core/utils"
 )
 
 func main() {

@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/yuanzix/userAuth/utils"
+	"github.com/yuanzix/beatify-core/utils"
 )
 
 type APIServer struct {

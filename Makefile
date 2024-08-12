@@ -1,5 +1,5 @@
 build:
-	@go build -o bin/userAuth
+	@go build -o bin/beatify-core
 
 run: build
-	@./bin/userAuth
+	@./bin/beatify-core

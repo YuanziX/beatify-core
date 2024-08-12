@@ -1,4 +1,4 @@
-module github.com/yuanzix/userAuth
+module github.com/yuanzix/beatify-core
 
 go 1.22.5
 

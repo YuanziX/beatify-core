@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/yuanzix/userAuth/internal/database"
+	"github.com/yuanzix/beatify-core/internal/database"
 )
 
 type User struct {

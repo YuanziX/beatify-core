@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/yuanzix/userAuth/models"
-	"github.com/yuanzix/userAuth/utils"
+	"github.com/yuanzix/beatify-core/models"
+	"github.com/yuanzix/beatify-core/utils"
 )
 
 func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) (statusCode int, err error) {

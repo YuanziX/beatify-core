@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/yuanzix/userAuth/utils"
+	"github.com/yuanzix/beatify-core/utils"
 )
 
 func (s *APIServer) handleStreamAudio(w http.ResponseWriter, r *http.Request) (int, error) {

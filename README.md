@@ -1,8 +1,8 @@
-# userAuth
+# beatify-core
 
 ## Overview
 
-**userAuth** is a baseline project designed to explore and learn the fundamentals of backend development and user authentication. This project serves as a practical learning tool to understand how to implement basic authentication mechanisms, manage user sessions, and interact with a database in a backend environment.
+**beatify-core** is a baseline project designed to explore and learn the fundamentals of backend development and user authentication. This project serves as a practical learning tool to understand how to implement basic authentication mechanisms, manage user sessions, and interact with a database in a backend environment.
 
 ## Features that I wish to implement
 
@@ -31,8 +31,8 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/YuanziX/userAuth.git
-   cd userAuth
+   git clone https://github.com/YuanziX/beatify-core.git
+   cd beatify-core
    ```
 
 2. Install dependencies:
