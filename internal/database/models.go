@@ -16,6 +16,15 @@ type Auth struct {
 	AuthUuid  uuid.UUID
 }
 
+type Music struct {
+	ID       int32
+	Title    string
+	Artist   string
+	Album    string
+	Location string
+	Year     int32
+}
+
 type User struct {
 	UserID         int32
 	Email          string
