@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -8,6 +10,25 @@ import (
 
 	"github.com/yuanzix/beatify-core/utils"
 )
+
+func (s *APIServer) handleGetMusicList(w http.ResponseWriter, r *http.Request) (int, error) {
+	pageNo, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil || pageNo <= 0 {
+		return http.StatusBadRequest, fmt.Errorf("invalid page number: %v", err)
+	}
+
+	musicList, err := s.store.GetMusicList(pageNo)
+
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	if len(*musicList) == 0 {
+		return http.StatusRequestedRangeNotSatisfiable, errors.New("reached end of content")
+	}
+
+	return utils.WriteJSON(w, http.StatusOK, musicList)
+}
 
 func (s *APIServer) handleStreamAudio(w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))

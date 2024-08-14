@@ -25,6 +25,7 @@ type Storage interface {
 	DeleteAllAuth(string) error
 	CheckAuthExists(models.AuthDetails) (bool, error)
 	GetMusicByID(int) (*database.Music, error)
+	GetMusicList(int) (*[]database.Music, error)
 }
 
 type PostgresStore struct {
@@ -156,4 +157,13 @@ func (s *PostgresStore) CheckAuthExists(auth models.AuthDetails) (exists bool, e
 func (s *PostgresStore) GetMusicByID(id int) (*database.Music, error) {
 	music, err := s.queries.GetMusicByID(context.Background(), int32(id))
 	return &music, err
+}
+
+func (s *PostgresStore) GetMusicList(page int) (*[]database.Music, error) {
+	musicSlice, err := s.queries.GetMusicList(context.Background(), database.GetMusicListParams{
+		Limit:  20,
+		Offset: int32((page - 1) * 20),
+	})
+
+	return &musicSlice, err
 }

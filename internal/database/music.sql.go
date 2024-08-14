@@ -26,3 +26,45 @@ func (q *Queries) GetMusicByID(ctx context.Context, id int32) (Music, error) {
 	)
 	return i, err
 }
+
+const getMusicList = `-- name: GetMusicList :many
+SELECT id, title, artist, album, location, year
+FROM music
+LIMIT $1
+OFFSET $2
+`
+
+type GetMusicListParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) GetMusicList(ctx context.Context, arg GetMusicListParams) ([]Music, error) {
+	rows, err := q.db.QueryContext(ctx, getMusicList, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Music
+	for rows.Next() {
+		var i Music
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Artist,
+			&i.Album,
+			&i.Location,
+			&i.Year,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
