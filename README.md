@@ -1,66 +1,72 @@
-# beatify-core
+# Beatify Core
 
-## Overview
+Welcome to Beatify Core! This project is a backend service for a music streaming application that handles music management, user authentication, and streaming functionalities.
 
-**beatify-core** is a baseline project designed to explore and learn the fundamentals of backend development and user authentication. This project serves as a practical learning tool to understand how to implement basic authentication mechanisms, manage user sessions, and interact with a database in a backend environment.
+## Features
 
-## Features that I wish to implement
+- **Music Hosting**: Store and manage music files.
+- **User Authentication**: Secure user registration and login.
+- **Music Streaming**: Stream music with support for HTTP range requests.
+- **Music Uploading**: Allow users to upload their music.
+- **Music Fetching**: Retrieve music from alternative resources if not available on the platform.
 
-- **User Registration**: Users can sign up with an email and password.
-- **User Login**: Authenticated users can log in using their credentials.
-- **JWT Authentication**: Secure API endpoints using JSON Web Tokens (JWT).
-- **Password Hashing**: User passwords are securely hashed before storage.
-- **Session Management**: Manage user sessions to ensure secure access to protected resources.
+## Project Structure
 
-## Tech Stack
+- **Music Management**: Handles operations related to storing and managing music.
+- **User Authentication**: Manages user accounts and authentication using JWTs.
+- **Streaming Service**: Supports streaming of music files with range requests.
 
-- **Backend**: Go
-- **Database**: SQL (Postgres)
-- **Authentication**: JWT for token-based authentication
-- **Additional Tools**: sqlc for database operations, goose for database migrations
+## Installation
 
-## Getting Started
-
-### Prerequisites
-
-- Go 1.20 or later
-- A SQL database (PostgreSQL)
-- make (non mandatory)
-
-### Installation
+To run this project locally, you need to have Go installed. Follow these steps to get started:
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/YuanziX/beatify-core.git
-   cd beatify-core
-   ```
+    ```bash
+    git clone https://github.com/YuanziX/beatify-core.git
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd beatify-core
+    ```
+3. Install dependencies:
+    ```bash
+    go mod tidy
+    ```
 
-2. Install dependencies:
-   ```bash
-   go mod tidy
-   ```
+## Configuration
 
-3. Copy .env.sample to .env and fill in the required fields.
-   ```bash
-   cp .env.sample .env
-   ```
+Create a `.env` file in the root directory of the project and add your environment variables. Example configuration is included in .env.sample
 
-4. Run the application:
-   ```bash
-   make run
-   ```
+## Running the Project
 
-## Learning Goals
+To start the server, use the following command:
 
-- Understanding backend architecture and design.
-- Implementing user authentication securely.
-- Gaining hands-on experience with Go and SQL databases.
-- Exploring JWT for secure API authentication.
+```bash
+make run
+```
+
+## API Endpoints
+
+- **GET /users**: Get a list of users (To be protected with RBA).
+- **POST /user**: Create a new user.
+- **GET /user/{email}/verify**: Verify a user's email.
+- **GET /user/{email}/isVerified**: Check if a user's email is verified.
+- **GET /user/{email}/resendVerificationMail**: Resend verification email.
+- **GET /user/{email}**: Get user details by email (protected).
+- **DELETE /user/{email}**: Delete a user by email (protected).
+- **POST /login**: Log in a user.
+- **GET /logout**: Log out a user (protected).
+- **GET /music**: Get a list of available music.
+- **GET /music/stream?id=n**: Stream music file with id n.
 
 ## Contributing
 
-This project is primarily for personal learning, but contributions are welcome. Feel free to open issues or submit pull requests.
+If you would like to contribute to Beatify Core, please fork the repository and create a pull request with your changes. Make sure to follow the code style guidelines and add appropriate tests.
 
 ## License
 
 This project is licensed under the MIT License.
+
+## Contact
+
+For any questions or feedback, please contact [YuanziX](mailto:achubadyal4@gmail.com).
