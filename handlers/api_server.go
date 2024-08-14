@@ -37,6 +37,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("POST /login", s.makeHTTPHandlerFunc(s.handleLogin))
 	router.HandleFunc("GET /logout", s.makeProtectedHandlerFunc(s.handleLogout))
 
+	router.HandleFunc("POST /music/upload", s.makeHTTPHandlerFunc(s.UploadMusicHandler))
 	router.HandleFunc("GET /music", s.makeHTTPHandlerFunc(s.handleGetMusicList))
 	router.HandleFunc("GET /music/stream", s.makeHTTPHandlerFunc(s.handleStreamAudio))
 

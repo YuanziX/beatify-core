@@ -9,6 +9,40 @@ import (
 	"context"
 )
 
+const createMusic = `-- name: CreateMusic :one
+INSERT INTO music (title, artist, album, location, year)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING id, title, artist, album, location, year
+`
+
+type CreateMusicParams struct {
+	Title    string
+	Artist   string
+	Album    string
+	Location string
+	Year     int32
+}
+
+func (q *Queries) CreateMusic(ctx context.Context, arg CreateMusicParams) (Music, error) {
+	row := q.db.QueryRowContext(ctx, createMusic,
+		arg.Title,
+		arg.Artist,
+		arg.Album,
+		arg.Location,
+		arg.Year,
+	)
+	var i Music
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Artist,
+		&i.Album,
+		&i.Location,
+		&i.Year,
+	)
+	return i, err
+}
+
 const getMusicByID = `-- name: GetMusicByID :one
 SELECT id, title, artist, album, location, year FROM music WHERE id = $1
 `

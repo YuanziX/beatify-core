@@ -24,6 +24,7 @@ type Storage interface {
 	DeleteAuth(models.AuthDetails) error
 	DeleteAllAuth(string) error
 	CheckAuthExists(models.AuthDetails) (bool, error)
+	CreateMusic(*models.Music) (*database.Music, error)
 	GetMusicByID(int) (*database.Music, error)
 	GetMusicList(int) (*[]database.Music, error)
 }
@@ -152,6 +153,18 @@ func (s *PostgresStore) CheckAuthExists(auth models.AuthDetails) (exists bool, e
 		AuthUuid:  auth.AuthUUID,
 	})
 	return
+}
+
+func (s *PostgresStore) CreateMusic(music *models.Music) (*database.Music, error) {
+	musicDB, err := s.queries.CreateMusic(context.Background(), database.CreateMusicParams{
+		Title:    music.Title,
+		Artist:   music.Artist,
+		Album:    music.Album,
+		Location: music.Location,
+		Year:     music.Year,
+	})
+
+	return &musicDB, err
 }
 
 func (s *PostgresStore) GetMusicByID(id int) (*database.Music, error) {

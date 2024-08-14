@@ -3,13 +3,70 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
+	"github.com/yuanzix/beatify-core/models"
 	"github.com/yuanzix/beatify-core/utils"
 )
+
+func (s *APIServer) UploadMusicHandler(w http.ResponseWriter, r *http.Request) (int, error) {
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	file, handler, err := r.FormFile("music_file")
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+	defer file.Close()
+
+	if _, err := os.Stat("./music"); os.IsNotExist(err) {
+		os.Mkdir("./music", os.ModePerm)
+	}
+
+	filePath := filepath.Join("./music", handler.Filename)
+
+	dst, err := os.Create(filePath)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+	defer dst.Close()
+
+	if _, err := io.Copy(dst, file); err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	title := r.FormValue("title")
+	artist := r.FormValue("artist")
+	album := r.FormValue("album")
+	yearStr := r.FormValue("year")
+
+	year, err := strconv.Atoi(yearStr)
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	newMusic := &models.Music{
+		Title:    title,
+		Artist:   artist,
+		Album:    album,
+		Location: filePath,
+		Year:     int32(year),
+	}
+
+	createdMusic, err := s.store.CreateMusic(newMusic)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return utils.WriteJSON(w, http.StatusCreated, createdMusic)
+}
 
 func (s *APIServer) handleGetMusicList(w http.ResponseWriter, r *http.Request) (int, error) {
 	pageNo, err := strconv.Atoi(r.URL.Query().Get("page"))

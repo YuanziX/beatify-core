@@ -16,6 +16,6 @@ func main() {
 		log.Fatal(err1, err2, err3, err4)
 	}
 
-	server := handlers.NewAPIServer(":3000", store)
+	server := handlers.NewAPIServer(":5000", store)
 	server.Run()
 }
