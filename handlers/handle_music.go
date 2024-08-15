@@ -27,8 +27,7 @@ func (s *APIServer) UploadMusicHandler(w http.ResponseWriter, r *http.Request) (
 	defer file.Close()
 
 	if _, err := os.Stat("./music"); os.IsNotExist(err) {
-		err := os.Mkdir("./music", os.ModePerm)
-		if err != nil {
+		if err := os.Mkdir("./music", os.ModePerm); err != nil {
 			return http.StatusInternalServerError, err
 		}
 	}
