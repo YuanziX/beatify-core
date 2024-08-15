@@ -27,19 +27,10 @@ func (s *APIServer) UploadMusicHandler(w http.ResponseWriter, r *http.Request) (
 	defer file.Close()
 
 	if _, err := os.Stat("./music"); os.IsNotExist(err) {
-		os.Mkdir("./music", os.ModePerm)
-	}
-
-	filePath := filepath.Join("./music", handler.Filename)
-
-	dst, err := os.Create(filePath)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-	defer dst.Close()
-
-	if _, err := io.Copy(dst, file); err != nil {
-		return http.StatusInternalServerError, err
+		err := os.Mkdir("./music", os.ModePerm)
+		if err != nil {
+			return http.StatusInternalServerError, err
+		}
 	}
 
 	title := r.FormValue("title")
@@ -50,6 +41,20 @@ func (s *APIServer) UploadMusicHandler(w http.ResponseWriter, r *http.Request) (
 	year, err := strconv.Atoi(yearStr)
 	if err != nil {
 		return http.StatusBadRequest, err
+	}
+
+	ext := filepath.Ext(handler.Filename)
+	newFileName := fmt.Sprintf("%s-%s-%s-(%d)%s", sanitizeFileName(artist), sanitizeFileName(title), sanitizeFileName(album), year, ext)
+	filePath := filepath.Join("./music", newFileName)
+
+	dst, err := os.Create(filePath)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+	defer dst.Close()
+
+	if _, err := io.Copy(dst, file); err != nil {
+		return http.StatusInternalServerError, err
 	}
 
 	newMusic := &models.Music{
@@ -150,4 +155,8 @@ func (s *APIServer) handleStreamAudio(w http.ResponseWriter, r *http.Request) (i
 	w.Write(buf)
 
 	return utils.WriteJSON(w, http.StatusPartialContent, map[string]string{"stream": "successful"})
+}
+
+func sanitizeFileName(name string) string {
+	return strings.NewReplacer(" ", "_", "/", "-", "\\", "-", ":", "-", "*", "-", "?", "-", "\"", "-", "<", "-", ">", "-", "|", "-").Replace(name)
 }
