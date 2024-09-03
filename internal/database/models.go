@@ -17,12 +17,13 @@ type Auth struct {
 }
 
 type Music struct {
-	ID       int32
-	Title    string
-	Artist   string
-	Album    string
-	Location string
-	Year     int32
+	ID                int32
+	Title             string
+	Artist            string
+	Album             string
+	Location          string
+	Year              int32
+	ThumbnailLocation string
 }
 
 type User struct {

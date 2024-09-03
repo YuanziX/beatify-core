@@ -20,14 +20,32 @@ func (s *APIServer) UploadMusicHandler(w http.ResponseWriter, r *http.Request) (
 		return http.StatusBadRequest, err
 	}
 
-	file, handler, err := r.FormFile("music_file")
+	musicFile, musicFileHandler, err := r.FormFile("music_file")
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	defer file.Close()
+	defer musicFile.Close()
 
 	if _, err := os.Stat("./music"); os.IsNotExist(err) {
 		if err := os.Mkdir("./music", os.ModePerm); err != nil {
+			return http.StatusInternalServerError, err
+		}
+	}
+
+	thumbnailFile, thumbnailFileHandler, err := r.FormFile("thumbnail_file")
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+	defer thumbnailFile.Close()
+
+	if _, err := os.Stat("./music"); os.IsNotExist(err) {
+		if err := os.Mkdir("./music", os.ModePerm); err != nil {
+			return http.StatusInternalServerError, err
+		}
+	}
+
+	if _, err := os.Stat("./music/thumbnails"); os.IsNotExist(err) {
+		if err := os.Mkdir("./music/thumbnails", os.ModePerm); err != nil {
 			return http.StatusInternalServerError, err
 		}
 	}
@@ -42,26 +60,43 @@ func (s *APIServer) UploadMusicHandler(w http.ResponseWriter, r *http.Request) (
 		return http.StatusBadRequest, err
 	}
 
-	ext := filepath.Ext(handler.Filename)
-	newFileName := fmt.Sprintf("%s-%s-%s-(%d)%s", sanitizeFileName(artist), sanitizeFileName(title), sanitizeFileName(album), year, ext)
-	filePath := filepath.Join("./music", newFileName)
+	musicFileExt := filepath.Ext(musicFileHandler.Filename)
+	thumbnailFileExt := filepath.Ext(thumbnailFileHandler.Filename)
+	baseFileName := fmt.Sprintf("%s-%s-%s-(%d)", sanitizeFileName(artist), sanitizeFileName(title), sanitizeFileName(album), year)
+	newMusicFileName := fmt.Sprintf("%s%s", baseFileName, musicFileExt)
+	newThumbnailFileName := fmt.Sprintf("%s-thumnail%s", baseFileName, thumbnailFileExt)
+	musicFilePath := filepath.Join("./music", newMusicFileName)
+	thumbnailFilePath := filepath.Join("./music/thumbnails", newThumbnailFileName)
 
-	dst, err := os.Create(filePath)
+	musicDst, err := os.Create(musicFilePath)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
-	defer dst.Close()
 
-	if _, err := io.Copy(dst, file); err != nil {
+	thumbnailDst, err := os.Create(thumbnailFilePath)
+	if err != nil {
+		return http.StatusInternalServerError, err
+
+	}
+
+	defer musicDst.Close()
+	defer thumbnailDst.Close()
+
+	if _, err := io.Copy(thumbnailDst, thumbnailFile); err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	if _, err := io.Copy(musicDst, musicFile); err != nil {
 		return http.StatusInternalServerError, err
 	}
 
 	newMusic := &models.Music{
-		Title:    title,
-		Artist:   artist,
-		Album:    album,
-		Location: filePath,
-		Year:     int32(year),
+		Title:             title,
+		Artist:            artist,
+		Album:             album,
+		Location:          musicFilePath,
+		ThumbnailLocation: thumbnailFilePath,
+		Year:              int32(year),
 	}
 
 	createdMusic, err := s.store.CreateMusic(newMusic)
@@ -103,6 +138,22 @@ func (s *APIServer) handleStreamAudio(w http.ResponseWriter, r *http.Request) (i
 	}
 
 	http.ServeFile(w, r, music.Location)
+
+	return http.StatusOK, nil
+}
+
+func (s *APIServer) handleGetThumbnail(w http.ResponseWriter, r *http.Request) (int, error) {
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	music, err := s.store.GetMusicByID(id)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	http.ServeFile(w, r, music.ThumbnailLocation)
 
 	return http.StatusOK, nil
 }

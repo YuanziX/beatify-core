@@ -40,6 +40,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("POST /music/upload", s.makeHTTPHandlerFunc(s.UploadMusicHandler))
 	router.HandleFunc("GET /music", s.makeHTTPHandlerFunc(s.handleGetMusicList))
 	router.HandleFunc("GET /music/stream", s.makeHTTPHandlerFunc(s.handleStreamAudio))
+	router.HandleFunc("GET /music/thumbnail", s.makeHTTPHandlerFunc(s.handleGetThumbnail))
 
 	log.Printf("JSON API server running on port: %v\n", s.listenAddress)
 	http.ListenAndServe(s.listenAddress, router)

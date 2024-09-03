@@ -12,7 +12,7 @@ import (
 const createMusic = `-- name: CreateMusic :one
 INSERT INTO music (title, artist, album, location, year)
 VALUES ($1, $2, $3, $4, $5)
-RETURNING id, title, artist, album, location, year
+RETURNING id, title, artist, album, location, year, thumbnail_location
 `
 
 type CreateMusicParams struct {
@@ -39,12 +39,13 @@ func (q *Queries) CreateMusic(ctx context.Context, arg CreateMusicParams) (Music
 		&i.Album,
 		&i.Location,
 		&i.Year,
+		&i.ThumbnailLocation,
 	)
 	return i, err
 }
 
 const getMusicByID = `-- name: GetMusicByID :one
-SELECT id, title, artist, album, location, year FROM music WHERE id = $1
+SELECT id, title, artist, album, location, year, thumbnail_location FROM music WHERE id = $1
 `
 
 func (q *Queries) GetMusicByID(ctx context.Context, id int32) (Music, error) {
@@ -57,12 +58,13 @@ func (q *Queries) GetMusicByID(ctx context.Context, id int32) (Music, error) {
 		&i.Album,
 		&i.Location,
 		&i.Year,
+		&i.ThumbnailLocation,
 	)
 	return i, err
 }
 
 const getMusicList = `-- name: GetMusicList :many
-SELECT id, title, artist, album, location, year
+SELECT id, title, artist, album, location, year, thumbnail_location
 FROM music
 LIMIT $1
 OFFSET $2
@@ -89,6 +91,7 @@ func (q *Queries) GetMusicList(ctx context.Context, arg GetMusicListParams) ([]M
 			&i.Album,
 			&i.Location,
 			&i.Year,
+			&i.ThumbnailLocation,
 		); err != nil {
 			return nil, err
 		}
