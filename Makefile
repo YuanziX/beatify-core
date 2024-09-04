@@ -1,3 +1,6 @@
+pull:
+	@git pull
+
 build:
 	@go build -o bin/beatify-core
 
@@ -7,7 +10,7 @@ run: build
 status:
 	@sudo systemctl status beatify-core
 
-serve: build
+serve: pull build
 	@sudo systemctl restart beatify-core nginx
-	sleep 1
-	$(MAKE) status
+	@sleep 1
+	@$(MAKE) status
